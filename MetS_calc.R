@@ -62,7 +62,7 @@ print(paste0('The weights file has weights for ', nrow(weights), ' Metabolites')
 ###############################################################################
 
 metabolites_in_std <- colnames(std_met)[colnames(std_met) != "ID"]
-metabolites_in_weights <- ukb_weights$nesda_abbre  
+metabolites_in_weights <- ukb_weights$ext_cohort_abbre  
 
 # Find intersection
 metabolites_to_keep <- intersect(metabolites_in_std, metabolites_in_weights)
@@ -93,9 +93,9 @@ std_met <- std_met %>%
 
 missing_percentage <- std_met %>% select(-ID) %>%
   summarise_all(~ mean(is.na(.)) * 100) %>%
-  gather(nesda_abbre, MissingPercentage) %>% arrange(desc(MissingPercentage))
+  gather(ext_cohort_abbre, MissingPercentage) %>% arrange(desc(MissingPercentage))
 
-print(paste0('The metabolite with the highest level of missingness is: ', missing_percentage$nesda_abbre[1]))
+print(paste0('The metabolite with the highest level of missingness is: ', missing_percentage$ext_cohort_abbre[1]))
 print(paste0('There are ', nrow(missing_percentage %>% filter(MissingPercentage > 5)), ' Metabolites with more than 5% missingness and ',
              nrow(missing_percentage %>% filter(MissingPercentage > 50)), ' with more than 50% missingness'))
 
@@ -109,7 +109,7 @@ missing_hist <- ggplot(missing_percentage, aes(x = MissingPercentage, fill = Mis
   ggtitle(cohort)
 
 missing_plot <- ggplot(missing_percentage %>% filter(MissingPercentage > 50),
-                           aes(x = reorder(nesda_abbre, -MissingPercentage), y = MissingPercentage)) +
+                           aes(x = reorder(ext_cohort_abbre, -MissingPercentage), y = MissingPercentage)) +
     geom_bar(stat='identity', fill = 'skyblue', color = 'black') + 
     labs(title = paste0(cohort, ': Metabolite missingness in MS'), x = "Metabolite", y = "% Missing") +
     theme_minimal()+
@@ -117,7 +117,7 @@ missing_plot <- ggplot(missing_percentage %>% filter(MissingPercentage > 50),
 
 # Plot the % of missingness against the absolute value of the MS coefficient 
 
-missingness_weights <- merge(missing_percentage, ukb_weights, by = 'nesda_abbre')
+missingness_weights <- merge(missing_percentage, ukb_weights, by = 'ext_cohort_abbre')
 
 missing_weights_plt <- ggplot(missingness_weights, aes(x = MissingPercentage, y = abs(weights))) + 
   geom_point() + 
@@ -143,10 +143,10 @@ write.table(missing_percentage, paste0(outdir, cohort, '_met_missingness.txt'), 
 print('Converting std_met to long format')
 long_std_met <- std_met %>% 
   pivot_longer(-c(all_of(id_col)), 
-               names_to = "nesda_abbre", 
+               names_to = "ext_cohort_abbre", 
                values_to= "Mval")
 print('Merging with the weights')
-long_std_met <- merge(long_std_met, ukb_weights, by = 'nesda_abbre')
+long_std_met <- merge(long_std_met, ukb_weights, by = 'ext_cohort_abbre')
 
 print('Calculating the metabolic scores')
 

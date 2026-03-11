@@ -52,7 +52,7 @@ print(paste0('Output to be saved in: ', outdir))
 ###############################################################################
 
 std_met <- readRDS(std_met_filepath) 
-print(paste0('The metabolite file has data for ', nrow(std_met), ' participants and ', std_met %>% select(-all_of(id_column)) %>% ncol(), " Metabolites"))  # Remove ID col
+print(paste0('The metabolite file has data for ', nrow(std_met), ' participants and ', std_met %>% select(-all_of(id_col)) %>% ncol(), " Metabolites"))  # Remove ID col
 ukb_weights <- read.xlsx(ukb_weights_filepath) 
 print(paste0('The weights file has weights for ', nrow(weights), ' Metabolites'))
 
@@ -92,7 +92,7 @@ if (length(metabolites_to_keep) != length(metabolites_in_std)) {
 std_met <- std_met %>%
   select(ID, all_of(metabolites_to_keep))
 
-missing_percentage <- std_met %>% select(-all_of(id_column)) %>%
+missing_percentage <- std_met %>% select(-all_of(id_col)) %>%
   summarise_all(~ mean(is.na(.)) * 100) %>%
   gather(ext_cohort_abbre, MissingPercentage) %>% arrange(desc(MissingPercentage))
 

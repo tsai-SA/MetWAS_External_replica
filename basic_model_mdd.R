@@ -3,6 +3,8 @@
 # Set up libraries and options/files
 
 ###############################################################################
+.libPaths(c("/exports/igmm/eddie/GenScotDepression/users/angela/Rlibs", .libPaths()))
+
 library(data.table)
 library(dplyr)
 library(optparse)
